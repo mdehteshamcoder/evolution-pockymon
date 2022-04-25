@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0%;
+            padding: 0%;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    
+        <table id="eht5">
+            <tr>
+               
+                <th>name of the pockymon</th>
+            </tr>
+            
+        </table>
+    
+   
+            <form action="">
+                <input type="text" placeholder="Search pockymon" id="pockymonname">
+                <button onclick="search()">Search</button>
+            </form>
+        
+        <div id="eht3">
+
+        </div>
+
+</body>
+<script>
+
+    // var pokemdata=localStorage.getItem("pokemon")
+    // if(pokemdata === null){
+    //      fetch(`https://pokeapi.co/api/v2/ability/?limit=20&offset=20`)
+    //    // fetch(`https://pokeapi.co/api/v2/pokemon`)
+    //     .then((res)=>{
+    //         res.json().then((res)=>{
+                
+    //           let arr=res.results
+    //           let str=[]
+    //           arr.forEach((ele) => {
+    //               str.push(ele.name)
+    //           });
+
+    //           localStorage.setItem("pokemon",JSON.stringify(str))
+    //         })
+
+    //     }).catch((err)=>{
+    //         console.log(err)
+    //     })
+     
+    // }
+    // console.log()
+      
+    //   var pokemondata2=JSON.parse(localStorage.getItem("pokemon"))
+
+    //   console.log(pokemondata2)
+    // windo.addEventListener
+    var container = document.querySelector('#eht5');
+    var searchtext = document.querySelector('#pockymonname');
+    var display = document.querySelector('#eht3')
+
+    if (localStorage.getItem('pokemon') == null) {
+        getdata()
+        setTimeout(displayname, 1000)
+    } else {
+        console.log('data stored already')
+        displayname()
+    }
+
+
+    async function getdata() {
+        var res = await fetch('https://pokeapi.co/api/v2/pokemon')
+     
+        var data = await res.json()
+        console.log(data.results)
+       
+        var arr = []
+        data.results.forEach(element => {
+            arr.push(element.name)
+        });
+        console.log(arr)
+        localStorage.setItem('pokemon', JSON.stringify(arr))
+    }
+
+    function displayname() {
+        var data = JSON.parse(localStorage.getItem('pokemon'))
+        data.forEach(element => {
+            var tr = document.createElement('tr')
+            tr.innerHTML =
+                `
+                <td>${element}</td>
+            `
+            container.append(tr)
+        });
+    }
+
+
+    function search() {
+        console.log(pockymonname.value)
+        display.innerHTML = ''
+        async function getinfo() {
+            var res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pockymonname.value}`)
+         
+            var data = await res.json()
+
+            var abi = []
+            var move = []
+            var id = data.id
+            var height = data.height
+            var weight = data.weight
+
+            data.abilities.forEach(element => {
+                abi.push(element.ability.name)
+            });
+            data.moves.forEach(element => {
+                move.push(element.move.name)
+            });
+          
+            var div = document.createElement('div')
+            var info = 
+            `
+                <h1>ID : ${id}</h1>
+                <h1>Pokemon Name : ${pockymonname.value}</h1>
+                <h2>Pokemon Height : ${height}</h2>
+                <h3>Pokemon Weight : ${weight}</h3>
+                <h3>Pokemon Abilities : </h3>
+                <p>${abi.join(',')}</p>
+                <h3>Pokemon Moves : </h3>
+                <p>${move.join(',')}</p>
+            `
+            div.innerHTML = info
+            display.append(div)
+        }
+        getinfo()
+    }
+</script>
+</html>
